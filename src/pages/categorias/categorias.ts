@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController } from 'ionic-angular';
 import { CategoriaService } from '../../services/domain/categoria.service';
 import { CategoriaDTO } from '../../models/categoria.dto';
 import { API_CONFIG } from '../../config/api.config';
@@ -19,16 +19,28 @@ export class CategoriasPage {
   constructor(
     public navCtrl: NavController, 
     public navParams: NavParams, 
-    public categoriaService: CategoriaService) {
+    public categoriaService: CategoriaService,
+    public loadingCtrl: LoadingController) {
   }
 
   ionViewDidLoad() {
-    this.categoriaService.findAll()
-      .subscribe(response => {
-        this.items = response;
-      },
-      error => {});
+    this.loadData();
+  }
 
+  loadData(){
+    this.categoriaService.findAll()
+    .subscribe(response => {
+      this.items = response;
+    },
+    error => {});
+  }
+
+  presentLoading() {
+    let loader = this.loadingCtrl.create({
+      content: "Carregando categorias..."
+    });
+    loader.present();
+    return loader;
   }
 
   showProdutos(categoria_id : string){
